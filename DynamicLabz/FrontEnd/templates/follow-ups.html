@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Follow-ups' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='follow-ups' title='Follow-ups' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Follow-ups</h2>
+        <p>{% if user.role == 'admin' %}All scheduled follow-ups across the team.{% else %}Your callbacks and reminders, in the order you need to do them.{% endif %}</p>
+      </div>
+    </div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
+        <div class="seg" id="fu-scope" role="group" aria-label="Follow-up range">
+          <button class="active" data-value="today">Today <span class="n">0</span></button>
+          <button data-value="overdue">Overdue <span class="n">0</span></button>
+          <button data-value="upcoming">Upcoming <span class="n">0</span></button>
+          <button data-value="done">Done <span class="n">0</span></button>
+        </div>
+        {% if user.role == 'admin' %}
+        <select class="form-select" id="fu-owner" style="max-width:220px" aria-label="Filter by owner"><option value="">Everyone</option></select>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="dl-card"><div id="fu-list">{% include 'partials/skeleton.html' %}</div></div>
+  </main>
+</div>
+
+{% include 'partials/prospect-modals.html' %}
+{% include 'scripts.html' %}
+<script src="{% static 'js/prospect_modals.js' %}"></script>
+<script src="{% static 'js/follow_ups.js' %}"></script>
+<script>
+  window.onload = function () {
+    FollowUpsInit(
+      "{{ csrf_token }}",
+      "{% url 'follow-up-list' %}",
+      "{% url 'prospect-list' %}",
+      "{% url 'call-log-list' %}",
+      "{% url 'users-list' %}"
+    );
+  };
+</script>
+</body>
+</html>

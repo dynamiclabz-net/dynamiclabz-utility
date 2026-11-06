@@ -1,0 +1,22 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <form class="modal-content" id="taskForm" novalidate>
+      <div class="modal-header"><h5 class="modal-title" id="taskModalTitle">Add task</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div id="tk-error" class="alert-dl" role="alert"></div>
+        <div class="row g-3">
+          <div class="col-12" id="tk-project-wrap"><label class="form-label" for="tk-project">Project *</label><select class="form-select" id="tk-project"></select></div>
+          <div class="col-12"><label class="form-label" for="tk-title">Task *</label><input class="form-control" id="tk-title" maxlength="255" placeholder="What needs to be done?"></div>
+          <div class="col-12"><label class="form-label" for="tk-desc">Details</label><textarea class="form-control" id="tk-desc" rows="3"></textarea></div>
+          <div class="col-sm-6"><label class="form-label" for="tk-assignee">Assign to</label><select class="form-select" id="tk-assignee"></select></div>
+          <div class="col-sm-6"><label class="form-label" for="tk-deadline">Deadline</label><input type="date" class="form-control" id="tk-deadline"></div>
+          <div class="col-sm-6"><label class="form-label" for="tk-priority">Priority</label>
+            <select class="form-select" id="tk-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
+          <div class="col-sm-6"><label class="form-label" for="tk-status">Status</label>
+            <select class="form-select" id="tk-status"><option value="todo">To do</option><option value="in_progress">In progress</option><option value="review">In review</option><option value="blocked">Blocked</option><option value="done">Done</option></select></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary" id="tk-save"><i class="bi bi-check2"></i>Save task</button></div>
+    </form>
+  </div>
+</div>

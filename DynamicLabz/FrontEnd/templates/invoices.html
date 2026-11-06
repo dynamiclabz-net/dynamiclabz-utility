@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Invoices' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='invoices' title='Invoices' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Invoices</h2>
+        <p>{% if user.role == 'admin' %}Billing across every client.{% else %}Invoices for the clients you manage.{% endif %} Add new invoices from a client page.</p>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3" id="invoice-kpis"></div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center">
+        <div class="input-icon flex-grow-1" style="min-width:220px;max-width:320px">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="flt-search" placeholder="Search invoice or client" aria-label="Search invoices">
+        </div>
+        <div class="seg" id="flt-status" role="group" aria-label="Filter by status">
+          <button class="active" data-value="">All</button>
+          <button data-value="sent">Sent</button>
+          <button data-value="overdue">Overdue</button>
+          <button data-value="paid">Paid</button>
+          <button data-value="draft">Draft</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dl-card">
+      <div class="table-wrap">
+        <table class="table dl-table">
+          <thead><tr><th>Invoice</th><th>Client</th><th>Amount</th><th>Issued</th><th>Due</th><th>Status</th><th></th></tr></thead>
+          <tbody id="invoice-rows"><tr><td colspan="7"><div class="p-3">{% include 'partials/skeleton.html' %}</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/invoices.js' %}"></script>
+<script>
+  window.onload = function () {
+    InvoicesInit("{{ csrf_token }}", "{% url 'invoice-list' %}");
+  };
+</script>
+</body>
+</html>

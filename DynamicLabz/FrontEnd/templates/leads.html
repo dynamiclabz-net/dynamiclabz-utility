@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Leads' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='leads' title='Leads' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Leads</h2>
+        <p>Prospects that had a meeting. Move them through proposal and negotiation until they become clients.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-ghost" href="{% url 'fe-prospects-list' %}"><i class="bi bi-telephone-outbound"></i>Go to prospects</a>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3" id="lead-kpis"></div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center">
+        <div class="input-icon flex-grow-1" style="min-width:220px;max-width:360px">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="flt-search" placeholder="Search lead, company or contact" aria-label="Search leads">
+        </div>
+        <div class="seg" id="flt-view" role="group" aria-label="Lead view">
+          <button class="active" data-value="open">Open <span class="n">0</span></button>
+          <button data-value="won">Won <span class="n">0</span></button>
+          <button data-value="lost">Lost <span class="n">0</span></button>
+        </div>
+        {% if user.role == 'admin' %}
+        <select class="form-select" id="flt-owner" style="max-width:200px" aria-label="Filter by owner"><option value="">All owners</option></select>
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="lead-board">{% include 'partials/skeleton.html' %}</div>
+  </main>
+</div>
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/leads.js' %}"></script>
+<script>
+  window.onload = function () {
+    LeadsInit(
+      "{{ csrf_token }}",
+      "{% url 'lead-list' %}",
+      "{% url 'users-list' %}"
+    );
+  };
+</script>
+</body>
+</html>

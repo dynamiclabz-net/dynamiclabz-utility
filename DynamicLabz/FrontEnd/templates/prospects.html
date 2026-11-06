@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Prospects' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='prospects' title='Prospects' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Prospects</h2>
+        <p>{% if user.role == 'admin' %}Every prospect across the team.{% else %}Companies you are calling. Log every call so nothing slips.{% endif %}</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-add-prospect"><i class="bi bi-plus-lg"></i>Add prospect</button>
+      </div>
+    </div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center">
+        <div class="input-icon flex-grow-1" style="min-width:220px;max-width:360px">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="flt-search" placeholder="Search company, contact, number, place" aria-label="Search prospects">
+        </div>
+        <div class="seg" id="flt-status" role="group" aria-label="Filter by status">
+          <button class="active" data-value="">All <span class="n" data-key="all">0</span></button>
+          <button data-value="new">New <span class="n">0</span></button>
+          <button data-value="contacted">Contacted <span class="n">0</span></button>
+          <button data-value="interested">Interested <span class="n">0</span></button>
+          <button data-value="follow_up">Follow-up <span class="n">0</span></button>
+          <button data-value="not_interested">Not interested <span class="n">0</span></button>
+          <button data-value="converted">Leads <span class="n">0</span></button>
+        </div>
+        {% if user.role == 'admin' %}
+        <select class="form-select" id="flt-owner" style="max-width:200px" aria-label="Filter by owner"><option value="">All owners</option></select>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="dl-card">
+      <div class="table-wrap">
+        <table class="table dl-table">
+          <thead>
+            <tr>
+              <th>Company</th><th>Contact</th><th>Status</th><th>Last call</th><th>Next follow-up</th>
+              {% if user.role == 'admin' %}<th>Owner</th>{% endif %}
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="prospect-rows"><tr><td colspan="7"><div class="p-3">{% include 'partials/skeleton.html' %}</div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 p-3 border-top" style="border-color:var(--dl-border)!important" id="pager"></div>
+    </div>
+  </main>
+</div>
+
+{% include 'partials/prospect-modals.html' %}
+{% include 'scripts.html' %}
+<script src="{% static 'js/prospect_modals.js' %}"></script>
+<script src="{% static 'js/prospects.js' %}"></script>
+<script>
+  window.onload = function () {
+    ProspectsInit(
+      "{{ csrf_token }}",
+      "{% url 'prospect-list' %}",
+      "{% url 'call-log-list' %}",
+      "{% url 'follow-up-list' %}",
+      "{% url 'users-list' %}",
+      {% if user.role == 'admin' %}true{% else %}false{% endif %}
+    );
+  };
+</script>
+</body>
+</html>

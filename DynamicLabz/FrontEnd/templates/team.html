@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Team' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='team' title='Team' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Team</h2>
+        <p>Add teammates, choose their role and reset passwords. Everyone signs in with email and password.</p>
+      </div>
+      <div class="actions"><button class="btn btn-primary" id="btn-add-user"><i class="bi bi-person-plus"></i>Add teammate</button></div>
+    </div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center">
+        <div class="input-icon flex-grow-1" style="min-width:220px;max-width:320px">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="flt-search" placeholder="Search name or email" aria-label="Search team">
+        </div>
+        <div class="seg" id="flt-role" role="group" aria-label="Filter by role">
+          <button class="active" data-value="">Everyone</button>
+          <button data-value="admin">Admins</button>
+          <button data-value="sales">Sales</button>
+          <button data-value="dev">Developers</button>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" role="switch" id="flt-inactive">
+          <label class="form-check-label small" for="flt-inactive">Show deactivated</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="dl-card">
+      <div class="table-wrap">
+        <table class="table dl-table">
+          <thead><tr><th>Teammate</th><th>Role</th><th>Contact</th><th>Joined</th><th>Last sign in</th><th>Status</th><th></th></tr></thead>
+          <tbody id="user-rows"><tr><td colspan="7"><div class="p-3">{% include 'partials/skeleton.html' %}</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <form class="modal-content" id="userForm" novalidate>
+      <div class="modal-header"><h5 class="modal-title" id="userModalTitle">Add teammate</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div id="us-error" class="alert-dl" role="alert"></div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="us-first">First name *</label><input class="form-control" id="us-first" maxlength="150" autocomplete="off"></div>
+          <div class="col-sm-6"><label class="form-label" for="us-last">Last name</label><input class="form-control" id="us-last" maxlength="150" autocomplete="off"></div>
+          <div class="col-12"><label class="form-label" for="us-email">Work email *</label><input type="email" class="form-control" id="us-email" autocomplete="off"></div>
+          <div class="col-sm-6"><label class="form-label" for="us-role">Role *</label>
+            <select class="form-select" id="us-role"><option value="sales">Sales</option><option value="dev">Developer</option><option value="admin">Admin</option></select></div>
+          <div class="col-sm-6"><label class="form-label" for="us-designation">Designation</label><input class="form-control" id="us-designation" maxlength="100"></div>
+          <div class="col-sm-6"><label class="form-label" for="us-phone">Phone</label><input class="form-control" id="us-phone" maxlength="20" inputmode="tel"></div>
+          <div class="col-sm-6"><label class="form-label" for="us-joined">Joining date</label><input type="date" class="form-control" id="us-joined"></div>
+          <div class="col-12">
+            <label class="form-label" for="us-password" id="us-password-label">Password *</label>
+            <input type="password" class="form-control" id="us-password" autocomplete="new-password" placeholder="At least 8 characters">
+            <div class="form-text" id="us-password-help">Share this with the teammate. They can change it from their profile.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary" id="us-save"><i class="bi bi-check2"></i>Save</button></div>
+    </form>
+  </div>
+</div>
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/team.js' %}"></script>
+<script>
+  window.onload = function () {
+    TeamInit("{{ csrf_token }}", "{% url 'users-list' %}", {{ user.id }});
+  };
+</script>
+</body>
+</html>

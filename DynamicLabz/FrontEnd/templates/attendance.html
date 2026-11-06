@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Attendance' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='attendance' title='Attendance' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>Attendance and timesheet</h2>
+        <p>Check in when you start, add what you worked on, and check out when you finish.</p>
+      </div>
+      <div class="actions">
+        <div class="d-flex align-items-center gap-1">
+          <button class="btn btn-ghost btn-icon" id="month-prev" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>
+          <input type="month" class="form-control" id="month-pick" style="width:170px" aria-label="Month">
+          <button class="btn btn-ghost btn-icon" id="month-next" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    {% if user.role == 'admin' %}
+    <div class="nav-tabs-dl" role="tablist">
+      <button role="tab" class="active" data-view="mine" aria-selected="true">My attendance</button>
+      <button role="tab" data-view="team" aria-selected="false">Team report</button>
+    </div>
+    {% endif %}
+
+    <div id="view-mine">
+      <div class="row g-3 mb-3">
+        <div class="col-lg-5"><section class="dl-card h-100" id="punch-card"><div class="dl-card-body">{% include 'partials/skeleton.html' %}</div></section></div>
+        <div class="col-lg-7"><section class="dl-card h-100"><div class="dl-card-head"><h3 id="cal-title">This month</h3><div id="month-summary" class="d-flex gap-3 small text-muted"></div></div><div class="dl-card-body"><div id="cal"></div></div></section></div>
+      </div>
+      <section class="dl-card">
+        <div class="dl-card-head"><h3>Timesheet log</h3><span class="text-muted small">What you worked on each day</span></div>
+        <div class="table-wrap"><table class="table dl-table"><thead><tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Mode</th><th style="min-width:280px">Timesheet</th><th></th></tr></thead><tbody id="log-rows"></tbody></table></div>
+      </section>
+    </div>
+
+    {% if user.role == 'admin' %}
+    <div id="view-team" class="d-none">
+      <div class="row g-3 mb-3" id="team-kpis"></div>
+      <section class="dl-card">
+        <div class="dl-card-head"><h3>Monthly attendance</h3>
+          <div class="d-flex flex-wrap gap-3 small text-muted"><span><i class="bi bi-square-fill" style="color:var(--dl-success)"></i> Present</span><span><i class="bi bi-square-fill" style="color:var(--dl-warning)"></i> Half day</span><span><i class="bi bi-square-fill" style="color:var(--dl-info)"></i> Leave</span></div></div>
+        <div class="dl-card-body"><div class="table-wrap" id="team-matrix"></div></div>
+      </section>
+    </div>
+    {% endif %}
+  </main>
+</div>
+
+<!-- Edit timesheet -->
+<div class="modal fade" id="timesheetModal" tabindex="-1" aria-labelledby="timesheetModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" id="timesheetForm" novalidate>
+      <div class="modal-header"><h5 class="modal-title" id="timesheetModalTitle">Edit timesheet</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body"><div id="ts-error" class="alert-dl" role="alert"></div>
+        <label class="form-label" for="ts-text">What was worked on</label><textarea class="form-control" id="ts-text" rows="5"></textarea></div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary" id="ts-save">Save</button></div>
+    </form>
+  </div>
+</div>
+
+{% if user.role == 'admin' %}
+<!-- Teammate detail -->
+<div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><div><h5 class="modal-title" id="memberModalTitle">Timesheets</h5><div class="text-muted small" id="member-sub"></div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <form class="d-flex flex-wrap gap-2 align-items-end mb-3 p-3 rounded" style="background:var(--dl-surface-2)" id="markForm">
+          <div><label class="form-label" for="mk-date">Mark a day</label><input type="date" class="form-control form-control-sm" id="mk-date"></div>
+          <div><label class="form-label" for="mk-status">As</label><select class="form-select form-select-sm" id="mk-status"><option value="leave">On leave</option><option value="present">Present</option><option value="half_day">Half day</option></select></div>
+          <button class="btn btn-sm btn-primary" type="submit">Save</button>
+        </form>
+        <div id="member-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/attendance.js' %}"></script>
+<script>
+  window.onload = function () {
+    AttendanceInit(
+      "{{ csrf_token }}",
+      "{% url 'attendance-list' %}",
+      "{% url 'attendance-report-list' %}",
+      {% if user.role == 'admin' %}true{% else %}false{% endif %}
+    );
+  };
+</script>
+</body>
+</html>

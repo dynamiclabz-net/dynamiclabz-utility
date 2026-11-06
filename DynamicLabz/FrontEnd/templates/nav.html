@@ -1,0 +1,78 @@
+{% load static %}
+<aside class="sidebar" id="sidebar" aria-label="Main navigation"
+       data-csrf="{{ csrf_token }}"
+       data-role="{{ user.role }}"
+       data-login-url="{% url 'fe-login-list' %}"
+       data-logout-url="{% url 'logout-list' %}"
+       data-followups-url="{% url 'follow-up-list' %}">
+  <a class="sidebar-brand" href="{% url 'fe-dashboard-list' %}" aria-label="Dynamic Labz home">
+    <img src="{% static 'img/logo-mark.svg' %}" alt="">
+    <span class="brand-word">Dynamic<small>Labz</small></span>
+  </a>
+
+  <nav class="sidebar-scroll">
+    <a class="nav-item-dl {% if active == 'dashboard' %}active{% endif %}" href="{% url 'fe-dashboard-list' %}"><i class="bi bi-grid-1x2"></i>Dashboard</a>
+
+    {% if user.role == 'admin' or user.role == 'sales' %}
+    <div class="nav-group-label">Pipeline</div>
+    <a class="nav-item-dl {% if active == 'prospects' %}active{% endif %}" href="{% url 'fe-prospects-list' %}"><i class="bi bi-telephone-outbound"></i>Prospects</a>
+    <a class="nav-item-dl {% if active == 'follow-ups' %}active{% endif %}" href="{% url 'fe-follow-ups-list' %}"><i class="bi bi-bell"></i>Follow-ups<span class="count" id="navFollowCount"></span></a>
+    <a class="nav-item-dl {% if active == 'leads' %}active{% endif %}" href="{% url 'fe-leads-list' %}"><i class="bi bi-funnel"></i>Leads</a>
+    {% endif %}
+
+    <div class="nav-group-label">Delivery</div>
+    <a class="nav-item-dl {% if active == 'clients' %}active{% endif %}" href="{% url 'fe-clients-list' %}"><i class="bi bi-buildings"></i>{% if user.role == 'dev' %}Projects{% else %}Clients{% endif %}</a>
+    <a class="nav-item-dl {% if active == 'tasks' %}active{% endif %}" href="{% url 'fe-tasks-list' %}"><i class="bi bi-check2-square"></i>{% if user.role == 'dev' %}My Tasks{% else %}Tasks{% endif %}</a>
+    {% if user.role == 'admin' or user.role == 'sales' %}
+    <a class="nav-item-dl {% if active == 'invoices' %}active{% endif %}" href="{% url 'fe-invoices-list' %}"><i class="bi bi-receipt"></i>Invoices</a>
+    {% endif %}
+
+    <div class="nav-group-label">People</div>
+    <a class="nav-item-dl {% if active == 'attendance' %}active{% endif %}" href="{% url 'fe-attendance-list' %}"><i class="bi bi-clock-history"></i>Attendance</a>
+    <a class="nav-item-dl {% if active == 'targets' %}active{% endif %}" href="{% url 'fe-targets-list' %}"><i class="bi bi-bullseye"></i>Targets</a>
+    {% if user.role == 'admin' %}
+    <a class="nav-item-dl {% if active == 'team' %}active{% endif %}" href="{% url 'fe-team-list' %}"><i class="bi bi-people"></i>Team</a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="user-chip">
+      <a href="{% url 'fe-profile-list' %}" class="d-flex align-items-center gap-2 text-decoration-none flex-grow-1" style="min-width:0" aria-label="Open profile">
+        {% if user.profile_image %}
+        <img class="avatar" src="{{ user.profile_image.url }}" alt="">
+        {% else %}
+        <span class="avatar">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span>
+        {% endif %}
+        <span class="meta"><strong>{{ user.full_name }}</strong><span>{{ user.get_role_display }}</span></span>
+      </a>
+      <button type="button" class="btn btn-ghost btn-icon" data-action="logout" aria-label="Sign out" title="Sign out"><i class="bi bi-box-arrow-right"></i></button>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<header class="topbar">
+  <button type="button" class="btn btn-ghost btn-icon sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false"><i class="bi bi-list fs-5"></i></button>
+  <h1>{{ title }}</h1>
+  <div class="topbar-actions">
+    <span class="text-muted small d-none d-md-inline" id="topbarDate"></span>
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Toggle light or dark theme" title="Toggle theme">
+      <i class="bi bi-moon-stars icon-moon"></i><i class="bi bi-sun icon-sun"></i>
+    </button>
+  </div>
+</header>
+<script>
+  window.DL_PAGES = {
+    prospect: "{% url 'fe-prospect-detail-detail' 0 %}",
+    lead: "{% url 'fe-lead-detail-detail' 0 %}",
+    client: "{% url 'fe-client-detail-detail' 0 %}",
+    prospects: "{% url 'fe-prospects-list' %}",
+    leads: "{% url 'fe-leads-list' %}",
+    followUps: "{% url 'fe-follow-ups-list' %}",
+    clients: "{% url 'fe-clients-list' %}",
+    tasks: "{% url 'fe-tasks-list' %}",
+    attendance: "{% url 'fe-attendance-list' %}",
+    targets: "{% url 'fe-targets-list' %}",
+    invoices: "{% url 'fe-invoices-list' %}"
+  };
+  document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });</script>

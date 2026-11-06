@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Tasks' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='tasks' title='Tasks' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2>{% if user.role == 'dev' %}My tasks{% else %}Tasks{% endif %}</h2>
+        <p>{% if user.role == 'dev' %}Everything assigned to you, ordered by deadline.{% else %}Track delivery across every client project.{% endif %}</p>
+      </div>
+      {% if user.role != 'dev' %}
+      <div class="actions"><button class="btn btn-primary" id="btn-add-task"><i class="bi bi-plus-lg"></i>Add task</button></div>
+      {% endif %}
+    </div>
+
+    <div class="row g-3 mb-3" id="task-kpis"></div>
+
+    <div class="dl-card mb-3">
+      <div class="dl-card-body d-flex flex-wrap gap-3 align-items-center">
+        <div class="input-icon flex-grow-1" style="min-width:200px;max-width:320px">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="flt-search" placeholder="Search task or project" aria-label="Search tasks">
+        </div>
+        <div class="seg" id="flt-scope" role="group" aria-label="Task range">
+          <button class="active" data-value="open">Open</button>
+          <button data-value="overdue">Overdue</button>
+          <button data-value="due_soon">Due in 3 days</button>
+          <button data-value="done">Done</button>
+          <button data-value="all">All</button>
+        </div>
+        <select class="form-select" id="flt-assignee" style="max-width:200px" aria-label="Filter by assignee"></select>
+        <select class="form-select" id="flt-priority" style="max-width:150px" aria-label="Filter by priority">
+          <option value="">Any priority</option><option value="urgent">Urgent</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="dl-card">
+      <div class="table-wrap">
+        <table class="table dl-table">
+          <thead><tr><th>Task</th><th>Assignee</th><th>Priority</th><th>Deadline</th><th style="min-width:150px">Status</th>{% if user.role != 'dev' %}<th></th>{% endif %}</tr></thead>
+          <tbody id="task-rows"><tr><td colspan="6"><div class="p-3">{% include 'partials/skeleton.html' %}</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% include 'partials/task-modal.html' %}
+{% include 'scripts.html' %}
+<script src="{% static 'js/task_modal.js' %}"></script>
+<script src="{% static 'js/tasks.js' %}"></script>
+<script>
+  window.onload = function () {
+    TasksInit(
+      "{{ csrf_token }}",
+      "{% url 'task-list' %}",
+      "{% url 'project-list' %}",
+      "{% url 'users-list' %}",
+      {{ user.id }},
+      "{{ user.role }}"
+    );
+  };
+</script>
+</body>
+</html>

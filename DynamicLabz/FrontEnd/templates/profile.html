@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Profile' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='profile' title='Profile' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div><h2>Your profile</h2><p>Update your details and keep your account secure.</p></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <form class="dl-card" id="profileForm" novalidate>
+          <div class="dl-card-head"><h3>Personal details</h3></div>
+          <div class="dl-card-body">
+            <div id="pf-error" class="alert-dl" role="alert"></div>
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <span id="pf-avatar"></span>
+              <div>
+                <label class="btn btn-sm btn-ghost mb-1" for="pf-image"><i class="bi bi-camera"></i>Change photo</label>
+                <input type="file" id="pf-image" accept="image/*" class="d-none">
+                <div class="xs text-muted">JPG or PNG, up to 5 MB.</div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-sm-6"><label class="form-label" for="pf-first">First name *</label><input class="form-control" id="pf-first" maxlength="150"></div>
+              <div class="col-sm-6"><label class="form-label" for="pf-last">Last name</label><input class="form-control" id="pf-last" maxlength="150"></div>
+              <div class="col-sm-6"><label class="form-label" for="pf-phone">Phone</label><input class="form-control" id="pf-phone" maxlength="20" inputmode="tel"></div>
+              <div class="col-sm-6"><label class="form-label" for="pf-designation">Designation</label><input class="form-control" id="pf-designation" maxlength="100"></div>
+              <div class="col-sm-6"><label class="form-label" for="pf-email">Email</label><input class="form-control" id="pf-email" disabled></div>
+              <div class="col-sm-6"><label class="form-label" for="pf-role">Role</label><input class="form-control" id="pf-role" disabled></div>
+            </div>
+          </div>
+          <div class="p-3 border-top text-end" style="border-color:var(--dl-border)!important"><button type="submit" class="btn btn-primary" id="pf-save"><i class="bi bi-check2"></i>Save changes</button></div>
+        </form>
+      </div>
+      <div class="col-lg-5">
+        <form class="dl-card" id="passwordForm" novalidate>
+          <div class="dl-card-head"><h3>Change password</h3></div>
+          <div class="dl-card-body">
+            <div id="pw-error" class="alert-dl" role="alert"></div>
+            <div class="mb-3"><label class="form-label" for="pw-current">Current password</label><input type="password" class="form-control" id="pw-current" autocomplete="current-password"></div>
+            <div class="mb-3"><label class="form-label" for="pw-new">New password</label><input type="password" class="form-control" id="pw-new" autocomplete="new-password"><div class="form-text">At least 8 characters.</div></div>
+            <div class="mb-3"><label class="form-label" for="pw-confirm">Confirm new password</label><input type="password" class="form-control" id="pw-confirm" autocomplete="new-password"></div>
+            <button type="submit" class="btn btn-primary" id="pw-save"><i class="bi bi-shield-lock"></i>Update password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/profile.js' %}"></script>
+<script>
+  window.onload = function () {
+    ProfileInit("{{ csrf_token }}", "{% url 'profile-list' %}", "{% url 'change-password-list' %}");
+  };
+</script>
+</body>
+</html>

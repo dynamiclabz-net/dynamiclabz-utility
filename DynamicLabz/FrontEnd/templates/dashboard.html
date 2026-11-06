@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include 'head.html' with title='Dashboard' %}
+</head>
+<body>
+<div class="app-shell">
+  {% include 'nav.html' with active='dashboard' title='Dashboard' %}
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h2 id="greeting">Welcome back</h2>
+        <p id="greeting-sub">Here is what is happening across the agency.</p>
+      </div>
+      <div class="actions" id="head-actions"></div>
+    </div>
+
+    <div id="attendance-banner"></div>
+    <div id="dashboard-root">
+      <div class="row g-3"><div class="col-12">{% include 'partials/skeleton.html' %}</div></div>
+    </div>
+  </main>
+</div>
+
+{% include 'scripts.html' %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+  window.onload = function () {
+    DashboardInit(
+      "{{ csrf_token }}",
+      "{% url 'dashboard-list' %}",
+      "{{ user.first_name|escapejs }}"
+    );
+  };
+</script>
+</body>
+</html>
